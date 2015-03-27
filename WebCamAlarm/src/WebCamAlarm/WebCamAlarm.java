@@ -8,38 +8,40 @@ package WebCamAlarm;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javax.imageio.ImageIO;  
+import java.util.List;
+import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import org.openide.util.Exceptions;
 
 /**
  *
  * @author Michal Kohútek
  */
-public class WebCamAlarm extends javax.swing.JFrame{
+public class WebCamAlarm extends javax.swing.JFrame {
 
-   int pixDiff;
-   long diff = 0;
-   //String link = "res/snd/Dalek.wav";
-  
-   
-   
-   CaptureImage cam = new CaptureImage();// CaptureImage(); 
+  //  List<Long> lDiff;  // Possible to-do - Graph
     
-   CopyImages cp = new CopyImages();
-   
-   Thread tCam = new Thread(cam);
-   Thread tCp = new Thread(cp); 
-   
-   public WebCamAlarm() {
-       
-       
-       //tCam.start();
-      // tCp.start();
-      // tCam.run();
+    
+    private int pixDiff;   // user-defined threshold
+    private long diff = 0; //
+
+    CaptureImage cam = new CaptureImage();
+
+    CopyImages cp = new CopyImages();
+
+    Thread tCam = new Thread(cam);
+    Thread tCp = new Thread(cp);
+
+    public WebCamAlarm() {
+
+        /*tCam.start();
+        tCp.start();
+        
+        tCam.stop();
+        tCp.stop();*/
+        
         initComponents();
     }
 
@@ -52,48 +54,39 @@ public class WebCamAlarm extends javax.swing.JFrame{
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
+        compareButton = new javax.swing.JButton();
         diffTextField = new javax.swing.JTextField();
-        jPanel2 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
+        drawGraphButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("Compare");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        compareButton.setText("Compare");
+        compareButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                compareButtonActionPerformed(evt);
             }
         });
 
         diffTextField.setToolTipText("Enter required difference");
+        diffTextField.setNextFocusableComponent(compareButton);
         diffTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 diffTextFieldActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 172, Short.MAX_VALUE)
-        );
-
-        jLabel2.setText("Difference Graph");
+        drawGraphButton.setText("Draw Graph");
+        drawGraphButton.setEnabled(false);
+        drawGraphButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                drawGraphButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(28, 28, 28))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -101,23 +94,21 @@ public class WebCamAlarm extends javax.swing.JFrame{
                         .addComponent(diffTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(120, 120, 120)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(compareButton, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(102, 102, 102)
-                        .addComponent(jLabel2)))
+                        .addGap(115, 115, 115)
+                        .addComponent(drawGraphButton)))
                 .addContainerGap(50, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(51, 51, 51)
-                .addComponent(jLabel2)
-                .addGap(18, 18, 18)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(50, 50, 50)
+                .addGap(269, 269, 269)
+                .addComponent(drawGraphButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(diffTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(compareButton, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(20, Short.MAX_VALUE))
         );
 
@@ -128,103 +119,106 @@ public class WebCamAlarm extends javax.swing.JFrame{
         // TODO add your handling code here:
     }//GEN-LAST:event_diffTextFieldActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-      pixDiff = Integer.parseInt(diffTextField.getText());
-      tCp.start();
-      tCam.start();
-      System.out.println(pixDiff);
-      
-      Thread compareImages = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    for (;;) {
-                        try {
-                            
-                            Thread.sleep(500);
-                           /*Mat mOld =  imread("res/img/old.jpg");
-                           Mat mNew =  imread("res/img/old.jpg");*/
-                            
-                            
-                            BufferedImage img1 = null;
-                            BufferedImage img2 = null;
-    try {
-      File f1 = new File("res/img/old.jpg");
-      File f2 = new File("res/img/new.jpg");
-      img1 = ImageIO.read(f1);
-      img2 = ImageIO.read(f2);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    int width1 = img1.getWidth(null);
-    int width2 = img2.getWidth(null);
-    int height1 = img1.getHeight(null);
-    int height2 = img2.getHeight(null);
-    if ((width1 != width2) || (height1 != height2)) {
-      System.err.println("Error: Images dimensions mismatch");
-      System.exit(1);
-    }
-    diff = 0;
-    for (int y = 0; y < height1; y++) {
-      for (int x = 0; x < width1; x++) {
-        int rgb1 = img1.getRGB(x, y);
-        int rgb2 = img2.getRGB(x, y);
-        int r1 = (rgb1 >> 16) & 0xff;
-        int g1 = (rgb1 >>  8) & 0xff;
-        int b1 = (rgb1      ) & 0xff;
-        int r2 = (rgb2 >> 16) & 0xff;
-        int g2 = (rgb2 >>  8) & 0xff;
-        int b2 = (rgb2      ) & 0xff;
-        diff += Math.abs(r1 - r2);
-        diff += Math.abs(g1 - g2);
-        diff += Math.abs(b1 - b2);
-        System.out.println(diff); 
+    private void compareButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_compareButtonActionPerformed
+        pixDiff = Integer.parseInt(diffTextField.getText());
+        tCp.start();
+        tCam.start();
         
-      }
-    }
-             if (diff>=pixDiff) System.out.println("Alarm! Alarm!");   
-            
-                
-                
-                    diff=0;
-                    try {
-        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("res/snd/Dalek.wav").getAbsoluteFile());
-        Clip clip = AudioSystem.getClip();
-        clip.open(audioInputStream);
-        clip.start();
-        Thread.sleep(10000);
-    } catch(Exception ex) {
-        System.out.println("Error with playing sound.");
-        ex.printStackTrace();
-    }
-                    
-                
-                
-            
-                        } catch (InterruptedException e) {
+        //System.out.println(pixDiff);
 
+        Thread compareImages = new Thread(new Runnable() { // Thread that compares images - duh
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+                
+                for (;;) {
+                    try {
+
+                        Thread.sleep(2000);
+                       
+
+                        BufferedImage img1 = null;
+                        BufferedImage img2 = null;
+                        try {
+                            File f1 = new File("res/img/old.jpg");
+                            File f2 = new File("res/img/new.jpg");
+                            img1 = ImageIO.read(f1);
+                            img2 = ImageIO.read(f2);
+                        } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        int width1 = img1.getWidth(null);
+                        int width2 = img2.getWidth(null);
+                        int height1 = img1.getHeight(null);
+                        int height2 = img2.getHeight(null);
+                        if ((width1 != width2) || (height1 != height2)) {
+                            System.err.println("Error: Images dimensions mismatch");
+                            System.exit(1);
+                        }
+                        diff = 0;
+                        for (int y = 0; y < height1; y++) {    //adds up the difference for all the color channels
+                            for (int x = 0; x < width1; x++) {
+                                int rgb1 = img1.getRGB(x, y);
+                                int rgb2 = img2.getRGB(x, y);
+                                int r1 = (rgb1 >> 16) & 0xff;
+                                int g1 = (rgb1 >> 8) & 0xff;
+                                int b1 = (rgb1) & 0xff;
+                                int r2 = (rgb2 >> 16) & 0xff;
+                                int g2 = (rgb2 >> 8) & 0xff;
+                                int b2 = (rgb2) & 0xff;
+                                diff += Math.abs(r1 - r2);
+                                diff += Math.abs(g1 - g2);
+                                diff += Math.abs(b1 - b2);
+
+         // boolean add = lDiff.add(diff);
+                                
+                            }
+                        }
+                        
+                        
+                        double n = width1 * height1 * 3;
+                        double pDiff = (diff / n / 255.0)*100.0;
+                        System.out.println("diff percent: " + (pDiff));
+                        
+                        
+                        double userPDiff = ((double)pixDiff/(width1*height1))*100.0;
+                        System.out.println("user defined diff percent: " + (userPDiff));
+                        
+                        if (pDiff >= userPDiff) {
+                            System.out.println("Alarm! Alarm!");
+                            System.out.println(diff); 
+                            diff = 0;
+                            
+                            playAlarm();
+                        }
+                        diff = 0;
+                        {
+                            
+                        }
+
+                    } catch (InterruptedException e) {
+
+                        e.printStackTrace();
                     }
                 }
-            });
-            compareImages.start();
-      
-            
-            
-            
-     // tCp.stop();
-           //   tCam.stop();
-      
-    }//GEN-LAST:event_jButton1ActionPerformed
+            }
+        });
+        compareImages.start();
 
-    
-      /*
-    private int compareImages(){
-Mat mOld =  imread("res/img/old.jpg");
-        Mat mNew =  imread("res/img/old.jpg");
-        return 0;
-    */
 
+    }//GEN-LAST:event_compareButtonActionPerformed
+
+    private void drawGraphButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_drawGraphButtonActionPerformed
+        // TODO add your handling code here:
+        /*GraphPanel gp;
+         gp = new GraphPanel(lDiff);
+         gp.createAndShowGui();*/
+
+    }//GEN-LAST:event_drawGraphButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -260,18 +254,28 @@ Mat mOld =  imread("res/img/old.jpg");
             }
         });
     }
-    
-    
-  
 
-    
-    
-    
+    private void playAlarm() { //making dalek noises
+
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("res/snd/Dalek.wav").getAbsoluteFile());
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start();
+
+            Thread.sleep(3800);
+            clip.stop();
+        } catch (Exception ex) {
+            System.out.println("Error with playing sound.");
+            ex.printStackTrace();
+        }
+
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton compareButton;
     private javax.swing.JTextField diffTextField;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel jPanel2;
+    private javax.swing.JButton drawGraphButton;
     // End of variables declaration//GEN-END:variables
 }

@@ -12,13 +12,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 import static org.apache.commons.io.FileUtils.copyFile;
-import static org.apache.commons.io.FileUtils.copyFileToDirectory;
 import org.openide.util.Exceptions;
 /**
  *
  * @author Michal Kohútek
  */
-public class CopyImages implements Runnable {
+public class CopyImages implements Runnable {  //copies and archives images by timestamp - easy peasy
     
     
     
@@ -34,7 +33,7 @@ public class CopyImages implements Runnable {
        while(true)
        {
         try {
-                Thread.sleep(2000);
+                Thread.sleep(1000);
             } catch (InterruptedException ex) {
                 Exceptions.printStackTrace(ex);
             }
@@ -45,11 +44,16 @@ public class CopyImages implements Runnable {
             
             String archT = "res/img/archive/" + t +".jpg";
         File fOld = new File("res/img/old.jpg");
+        File fNew = new File("res/img/new.jpg");
+        
+        
+        if (!fOld.isFile()) copyFile(fNew,fOld);
+        
         File fArch = new File(archT);
         
-        //copyFileToDirectory(fOld, arch,true);
+       
         copyFile(fOld,fArch);
-        File fNew = new File("res/img/new.jpg");
+      //  File fNew = new File("res/img/new.jpg");
         
         
         copyFile(fNew, fOld);

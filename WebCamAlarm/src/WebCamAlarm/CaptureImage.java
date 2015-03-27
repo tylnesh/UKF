@@ -15,7 +15,7 @@ import org.openide.util.Exceptions;
  *
  * @author Michal Kohútek
  */
-public class CaptureImage implements Runnable {
+public class CaptureImage implements Runnable {  //captures webcam images - easy peasy
     
 
     @Override
@@ -23,7 +23,7 @@ public class CaptureImage implements Runnable {
         while (true){
             
             try {
-                Thread.sleep(2000);
+                Thread.sleep(1000);
             } catch (InterruptedException ex) {
                 Exceptions.printStackTrace(ex);
             }
