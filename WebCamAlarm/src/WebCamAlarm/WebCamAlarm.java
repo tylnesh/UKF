@@ -8,7 +8,12 @@ package WebCamAlarm;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javax.imageio.ImageIO;  
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 
 /**
  *
@@ -16,9 +21,12 @@ import javax.imageio.ImageIO;
  */
 public class WebCamAlarm extends javax.swing.JFrame{
 
-   int pixDiff=0;
-   
+   int pixDiff;
+   long diff = 0;
+   //String link = "res/snd/Dalek.wav";
   
+   
+   
    CaptureImage cam = new CaptureImage();// CaptureImage(); 
     
    CopyImages cp = new CopyImages();
@@ -27,6 +35,7 @@ public class WebCamAlarm extends javax.swing.JFrame{
    Thread tCp = new Thread(cp); 
    
    public WebCamAlarm() {
+       
        
        //tCam.start();
       // tCp.start();
@@ -131,7 +140,7 @@ public class WebCamAlarm extends javax.swing.JFrame{
                     for (;;) {
                         try {
                             
-                            Thread.sleep(1500);
+                            Thread.sleep(500);
                            /*Mat mOld =  imread("res/img/old.jpg");
                            Mat mNew =  imread("res/img/old.jpg");*/
                             
@@ -154,7 +163,7 @@ public class WebCamAlarm extends javax.swing.JFrame{
       System.err.println("Error: Images dimensions mismatch");
       System.exit(1);
     }
-    long diff = 0;
+    diff = 0;
     for (int y = 0; y < height1; y++) {
       for (int x = 0; x < width1; x++) {
         int rgb1 = img1.getRGB(x, y);
@@ -168,11 +177,29 @@ public class WebCamAlarm extends javax.swing.JFrame{
         diff += Math.abs(r1 - r2);
         diff += Math.abs(g1 - g2);
         diff += Math.abs(b1 - b2);
-        //System.out.println(diff); 
+        System.out.println(diff); 
         
       }
     }
-             if (pixDiff<=diff) System.out.println("Alarm! Alarm!");           
+             if (diff>=pixDiff) System.out.println("Alarm! Alarm!");   
+            
+                
+                
+                    diff=0;
+                    try {
+        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("res/snd/Dalek.wav").getAbsoluteFile());
+        Clip clip = AudioSystem.getClip();
+        clip.open(audioInputStream);
+        clip.start();
+        Thread.sleep(10000);
+    } catch(Exception ex) {
+        System.out.println("Error with playing sound.");
+        ex.printStackTrace();
+    }
+                    
+                
+                
+            
                         } catch (InterruptedException e) {
 
                             e.printStackTrace();
@@ -182,6 +209,9 @@ public class WebCamAlarm extends javax.swing.JFrame{
             });
             compareImages.start();
       
+            
+            
+            
      // tCp.stop();
            //   tCam.stop();
       
